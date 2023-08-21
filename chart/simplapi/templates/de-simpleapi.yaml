@@ -1,0 +1,49 @@
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  creationTimestamp: null
+  generation: 1
+  labels:
+    template: simpleapi
+    apigw: simpleapi
+  name: simpleapi
+spec:
+  replicas: {{ .replicaCount }}
+  selector:
+    matchLabels:
+      app: simpleapi
+  template:
+    metadata:
+      annotations:
+        lab.local/podmetrics: "true"
+        lab.local/podmetrics_kind: simpleapi
+        prometheus.io/path: /metrics
+        prometheus.io/port: "9145"
+        prometheus.io/scheme: http
+        prometheus.io/scrape: "true"
+      creationTimestamp: null
+      labels:
+        app: simpleapi
+      name: simpleapi
+    spec:
+      containers:
+      - env:
+        - name: TZ
+          value: Europe/Prague
+        image: {{ .Values.image.repository }}:{{ .Values.image.tag }}
+        imagePullPolicy: Always
+        name: simpleapi
+        resources:
+          limits:
+            cpu: 100m
+            memory: 200M
+          requests:
+            cpu: 100m
+            memory: 200M
+        terminationMessagePath: /dev/termination-log
+        terminationMessagePolicy: File
+      dnsPolicy: ClusterFirst
+      restartPolicy: Always
+      schedulerName: default-scheduler
+      securityContext: {}
+      terminationGracePeriodSeconds: 30

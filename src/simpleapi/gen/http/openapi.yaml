@@ -1,0 +1,391 @@
+swagger: "2.0"
+info:
+  title: Simple Api service
+  description: Service for testing api gateways
+  version: ""
+consumes:
+- application/json
+- application/xml
+- application/gob
+produces:
+- application/json
+- application/xml
+- application/gob
+paths:
+  /article:
+    post:
+      tags:
+      - stuff
+      summary: Add stuff
+      description: Add article to the articles
+      operationId: stuff#Add
+      parameters:
+      - name: X-Simple-Admin
+        in: header
+        description: Who stored the column
+        required: false
+        type: string
+      - name: AddRequestBody
+        in: body
+        required: true
+        schema:
+          $ref: '#/definitions/StuffAddRequestBody'
+          required:
+          - Author
+          - Title
+      responses:
+        "201":
+          description: Created response.
+      schemes:
+      - http
+  /article/{id}:
+    get:
+      tags:
+      - stuff
+      summary: show stuff
+      description: Show article by id
+      operationId: stuff#show
+      parameters:
+      - name: id
+        in: path
+        description: Id of article to show
+        required: true
+        type: integer
+      responses:
+        "200":
+          description: OK response.
+          schema:
+            $ref: '#/definitions/StuffShowResponseBody'
+        "404":
+          description: Not Found response.
+          schema:
+            $ref: '#/definitions/StuffShowNotFoundResponseBody'
+        "500":
+          description: Internal Server Error response.
+          schema:
+            $ref: '#/definitions/StuffShowInternalErrorResponseBody'
+      schemes:
+      - http
+  /articles:
+    get:
+      tags:
+      - stuff
+      summary: list stuff
+      description: List all stored articles
+      operationId: stuff#list
+      responses:
+        "200":
+          description: OK response.
+          schema:
+            $ref: '#/definitions/StuffStoredArticleResponseCollection'
+      schemes:
+      - http
+  /timeout/article:
+    get:
+      tags:
+      - failures
+      summary: GetTimeout failures
+      description: List all stored articles
+      operationId: failures#GetTimeout
+      responses:
+        "200":
+          description: OK response.
+          schema:
+            $ref: '#/definitions/FailuresGetTimeoutResponseBody'
+      schemes:
+      - http
+    post:
+      tags:
+      - failures
+      summary: SetTimeout failures
+      description: Manage timeouts on the /article/{id} endpoint
+      operationId: failures#SetTimeout
+      parameters:
+      - name: SetTimeoutRequestBody
+        in: body
+        required: true
+        schema:
+          $ref: '#/definitions/FailuresSetTimeoutRequestBody'
+          required:
+          - TimeOutRate
+      responses:
+        "200":
+          description: OK response.
+        "400":
+          description: Bad Request response.
+      schemes:
+      - http
+definitions:
+  FailuresGetTimeoutResponseBody:
+    title: 'Mediatype identifier: application/vnd.timeoutrate; view=default'
+    type: object
+    properties:
+      timeoutrate:
+        type: integer
+        description: rate ot the timeouts in percent
+        example: 1538876421355597505
+        format: int64
+    description: GetTimeoutResponseBody result type (default view)
+    example:
+      timeoutrate: 1714632477236425140
+  FailuresSetTimeoutRequestBody:
+    title: FailuresSetTimeoutRequestBody
+    type: object
+    properties:
+      TimeOutRate:
+        type: integer
+        description: Rate of the failures on /article/{id}
+        example: 4264302026740351566
+        format: int64
+    example:
+      TimeOutRate: 8725446841430087504
+    required:
+    - TimeOutRate
+  StoredArticleResponse:
+    title: 'Mediatype identifier: application/vnd.article; view=default'
+    type: object
+    properties:
+      admin:
+        type: string
+        example: Sequi in modi.
+      author:
+        type: string
+        example: Dicta dicta neque cupiditate.
+      content:
+        type: string
+        example: Voluptas aut nam ipsam magni dolorem et.
+      desc:
+        type: string
+        example: Unde corrupti aliquam ut facere.
+      id:
+        type: integer
+        description: ID is the unique id of the article
+        example: 3072315448556974871
+        format: int64
+      title:
+        type: string
+        example: Quis tempora porro rem laborum reprehenderit et.
+    description: A StoredArticle describes article (default view)
+    example:
+      admin: Optio quaerat.
+      author: Iusto qui voluptatibus reprehenderit repudiandae.
+      content: Porro ad magnam.
+      desc: Quia perspiciatis voluptates soluta aspernatur assumenda.
+      id: 5723502879429001616
+      title: Iste tempore.
+  StuffAddRequestBody:
+    title: StuffAddRequestBody
+    type: object
+    properties:
+      Author:
+        type: string
+        description: Author name
+        example: Quam iste numquam nobis.
+      Content:
+        type: string
+        description: Content description
+        example: Molestias veniam a assumenda.
+      Desc:
+        type: string
+        description: Description
+        example: Molestias ut exercitationem.
+      Title:
+        type: string
+        description: Title
+        example: Quo consequatur sunt odit non.
+    example:
+      Author: Itaque aut aut molestias.
+      Content: Tempore officia unde nam quod aut.
+      Desc: Veniam accusamus esse ducimus.
+      Title: Consectetur officia facilis quia eligendi.
+    required:
+    - Author
+    - Title
+  StuffShowInternalErrorResponseBody:
+    title: 'Mediatype identifier: application/vnd.goa.error; view=default'
+    type: object
+    properties:
+      fault:
+        type: boolean
+        description: Is the error a server-side fault?
+        example: false
+      id:
+        type: string
+        description: ID is a unique identifier for this particular occurrence of the
+          problem.
+        example: 123abc
+      message:
+        type: string
+        description: Message is a human-readable explanation specific to this occurrence
+          of the problem.
+        example: parameter 'p' must be an integer
+      name:
+        type: string
+        description: Name is the name of this class of errors.
+        example: bad_request
+      temporary:
+        type: boolean
+        description: Is the error temporary?
+        example: false
+      timeout:
+        type: boolean
+        description: Is the error a timeout?
+        example: true
+    description: Internal Server Error (default view)
+    example:
+      fault: false
+      id: 123abc
+      message: parameter 'p' must be an integer
+      name: bad_request
+      temporary: false
+      timeout: false
+    required:
+    - name
+    - id
+    - message
+    - temporary
+    - timeout
+    - fault
+  StuffShowNotFoundResponseBody:
+    title: 'Mediatype identifier: application/vnd.goa.error; view=default'
+    type: object
+    properties:
+      fault:
+        type: boolean
+        description: Is the error a server-side fault?
+        example: false
+      id:
+        type: string
+        description: ID is a unique identifier for this particular occurrence of the
+          problem.
+        example: 123abc
+      message:
+        type: string
+        description: Message is a human-readable explanation specific to this occurrence
+          of the problem.
+        example: parameter 'p' must be an integer
+      name:
+        type: string
+        description: Name is the name of this class of errors.
+        example: bad_request
+      temporary:
+        type: boolean
+        description: Is the error temporary?
+        example: true
+      timeout:
+        type: boolean
+        description: Is the error a timeout?
+        example: true
+    description: Notfound is the error returned by the service methods when the id
+      of the stuff is not found. (default view)
+    example:
+      fault: false
+      id: 123abc
+      message: parameter 'p' must be an integer
+      name: bad_request
+      temporary: false
+      timeout: false
+    required:
+    - name
+    - id
+    - message
+    - temporary
+    - timeout
+    - fault
+  StuffShowResponseBody:
+    title: 'Mediatype identifier: application/vnd.article; view=default'
+    type: object
+    properties:
+      admin:
+        type: string
+        example: Atque recusandae.
+      author:
+        type: string
+        example: Error repudiandae veniam alias est nihil dolor.
+      content:
+        type: string
+        example: Autem et dolorum dolores.
+      desc:
+        type: string
+        example: A ducimus tenetur et rerum.
+      id:
+        type: integer
+        description: ID is the unique id of the article
+        example: 1337723991913797155
+        format: int64
+      title:
+        type: string
+        example: Architecto culpa.
+    description: ShowResponseBody result type (default view)
+    example:
+      admin: Iste aperiam consectetur.
+      author: Rerum deleniti.
+      content: Saepe commodi placeat at atque cum.
+      desc: Corrupti voluptas eos dignissimos et molestiae.
+      id: 3463051992732563580
+      title: Ut deleniti.
+  StuffShowTimeoutResponseBody:
+    title: 'Mediatype identifier: application/vnd.goa.error; view=default'
+    type: object
+    properties:
+      fault:
+        type: boolean
+        description: Is the error a server-side fault?
+        example: true
+      id:
+        type: string
+        description: ID is a unique identifier for this particular occurrence of the
+          problem.
+        example: 123abc
+      message:
+        type: string
+        description: Message is a human-readable explanation specific to this occurrence
+          of the problem.
+        example: parameter 'p' must be an integer
+      name:
+        type: string
+        description: Name is the name of this class of errors.
+        example: bad_request
+      temporary:
+        type: boolean
+        description: Is the error temporary?
+        example: true
+      timeout:
+        type: boolean
+        description: Is the error a timeout?
+        example: false
+    description: Operation timed out (default view)
+    example:
+      fault: true
+      id: 123abc
+      message: parameter 'p' must be an integer
+      name: bad_request
+      temporary: false
+      timeout: true
+    required:
+    - name
+    - id
+    - message
+    - temporary
+    - timeout
+    - fault
+  StuffStoredArticleResponseCollection:
+    title: 'Mediatype identifier: application/vnd.article; type=collection; view=default'
+    type: array
+    items:
+      $ref: '#/definitions/StoredArticleResponse'
+    description: ListResponseBody is the result type for an array of StoredArticleResponse
+      (default view)
+    example:
+    - admin: Autem assumenda qui nihil fugit itaque reprehenderit.
+      author: Placeat rerum culpa numquam et sit sit.
+      content: Eius ratione ut sit beatae asperiores possimus.
+      desc: Sint et deserunt ipsa.
+      id: 3044110735695730135
+      title: Recusandae molestiae nesciunt.
+    - admin: Autem assumenda qui nihil fugit itaque reprehenderit.
+      author: Placeat rerum culpa numquam et sit sit.
+      content: Eius ratione ut sit beatae asperiores possimus.
+      desc: Sint et deserunt ipsa.
+      id: 3044110735695730135
+      title: Recusandae molestiae nesciunt.

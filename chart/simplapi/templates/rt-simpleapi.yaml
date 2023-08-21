@@ -1,0 +1,25 @@
+apiVersion: route.openshift.io/v1
+kind: Route
+metadata:
+  creationTimestamp: null
+  labels:
+    app.kubernetes.io/managed-by: Helm
+  name: simpleapi
+spec:
+  host: simpleapi.lab.local
+  port:
+    targetPort: http
+  to:
+    kind: Service
+    name: svc-simple-api
+    weight: 100
+  wildcardPolicy: None
+status:
+  ingress:
+  - conditions:
+    - status: "True"
+      type: Admitted
+    host: simpleapi.lab.local
+    routerName: router
+    wildcardPolicy: None
+

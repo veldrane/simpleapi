@@ -1,0 +1,6 @@
+  {
+    "author": "Chris Saxon",
+    "content": "Plans: Explain and Execution",
+    "desc": "Learn to follow and understand the steps and processes in your SQL statement’s execution plan to get the information you need for tuning your SQL",
+    "title": "How to Read an Execution Plan"
+  }
